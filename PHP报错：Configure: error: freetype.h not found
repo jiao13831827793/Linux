@@ -1,0 +1,4 @@
+Configure: error: freetype.h not found 错误解决方法如下：
+补充依赖包即可
+yum install freetype-devel
+===================================
