@@ -1,0 +1,63 @@
+                 create  卷名	 { steripe/replica 2 }  主机名1:/挂在路径 主机名2;/挂在路径 {主机名1:/挂在路径 主机名2;/挂在路径} force//创建卷
+        volume 
+		             set     卷名    auth.allow  ip                                                   //设置卷防控权限
+		             info    {卷名}                                                                   //查看卷的信息加卷名是查看某个卷的信息 
+		             list    卷名                                                                     //查看卷列表，有多少卷
+		             status  卷名                                                                     //查看卷状态
+		             stop    卷名                                                                     //停止一个卷
+		             delete  卷名                                                                     //删除一个卷
+gluster
+       			     probe   主机名                                                                    //添加一个节点
+        peer
+				         detach  主机名                                                                    //删除有个节点
+				         status  主机名                                                                     //查看所有节点
+----------------------------------------------------------------------------------------------------------------------------------
+例：
+添加节点
+   [root@node1~]# gluster peer probe node1
+   只在主节点上操作，有多少台存储器就添加多少节点。
+
+查看说有节点
+   [root@node1~]# gluster peer status
+   会显示有多少台服务器，具体的名字叫什么，
+   输出正常会显示state： Peer in Cluster（Connected）,
+   显示Disconnected,检查hosts文件配置
+
+删除节点
+   [root@node1~]# gluster peer status node1
+   删除主机node1节点
+   
+创建分布式卷
+   gluster volume cerate dis-volume node1:/e6 node2:/e6 force
+
+创建条带卷
+    gluster volume create stripe-volume stripe 2 node1:/d5 node2:/d5 force
+    指定类型为 strioe 数值为2 后面跟两种存储服务器 创建的是条带卷
+
+创建复制卷
+    gluster volume create replica 2 node3:/d5 node4:/d5 force
+    指定类型为 replica 数值为2 后面跟了两个存储服务器 创建的是复制卷
+
+创建分布式条带卷
+    gluster volume create dis-stripe stripe 2 node1:/b3 node2:/b3 node3:/b3 node4:/b3 froce
+   指定类型为strip 数值为2 后面跟4个存储服务器 是2的两倍 创建的是分布式条带卷
+   
+创建分布式复制卷
+    gluster volume create dis-rep replica 2 node1:/c4 node2:/c4 node3:/c4 node4:/c4 force
+    指定类型为replica 数值2 后面跟4个存储服务器 是2的两倍 创建的是分布式复制卷。
+    
+查看卷
+[root@node1~]# gluster volume list 
+
+查看卷的状态
+[root@node1~]# gluster volume status
+
+停止卷
+[root@node1~]# gluster volume stop dis-stripe
+
+删除卷
+[root@node1~]# gluster volume delete dis-stripe
+
+设置卷访问权
+[root@node1~]# glusrter volume set dis-rep auth.allow 192.168.1.*,192.168.2.* 
+只允许192.168.1.0 和 192.168.2.0 网段访问dis-rep
