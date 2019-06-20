@@ -1,0 +1,67 @@
+ansible 组名 选项 
+ansible ip 选项
+ansible 192.168.1.1 -m shell -a ‘useradd 李四’      //在192.168.1.1 主机上创建李四
+[选项]
+	-v	输出详细过程
+	-I	指定组名的位置 默认/etc/ansible/hosts
+	-f	并发线程数，默认5
+	--private-key=PRIVATE_KEY_FILE 密钥
+	-m	指定模块
+	-M	指定模块存放路径，默认为/usr/share/ansible
+	-a	指定模块参数
+	-u	远程主机以哪个用户进行
+	-l	限制主机运行
+	--list-hosts	列出主机列表
+注意-m 和 -a 经常一起使用
+-----------------------------------------------------------------------------------------------------------------------------------
+Ansible 模块
+	command 模块
+    ansible all -m command -a ‘chdir=/home ls./‘  		//查看所有组机的home
+    command 	模块不支持管道，重定向shell等特性
+    chdir 		提前切入目录
+    creates 		在命令运行时创建一个文件，存在不创建
+    remover		在命令运行时移除文件
+    executeble 	指明运行的shell程序
+	shell 模块
+		ansible all -m shell -a ‘echo “hello” >> /tmp/hello.txt‘	//所有主机都在/tmp/hello.txt 写入 hello
+		shell 支持管道，重定向shell等特性
+	copy 模块
+		ansible web -m copy -a "src=/root/123 dest=/" 		//把本地主机上的/root/123 复制到所有主机的根目录下
+		src 		本机源地址
+		dest		目标地址
+		mode	权限
+		owner	属主
+		group	属组
+		content	远程主机源地址
+		ansible web -m copy -a “src=/etc/hosts dest=/tmp mode=777 owner=nobody group=root”	
+	houstname 模块
+		ansible web -m hostname -a "name=wangwu"	//web组里的主机上 主机名改王五
+		name	指明主机名
+	yum 模块
+		ansible web -m yum -a “name=http state=present”
+		name						程序名称
+		state=present|latest|absent 	present安装 latest安装最新 absent卸载
+		disablerepo					临时禁用哪个yum仓库
+		enablerepo					临时启用哪个yum仓库
+		conf_file						域名运行时配置文件，而不是默认
+		disble_gpg_check=yes|no		启用完整的校验
+	service 模块
+		ansible web -m server -a "name=http state=started enabled=yes" //开启http服务
+		name	被管理的服务名称
+		state=	动作 started启动	stopped关闭 restarted重启
+		enable= yes服务开启 no服务关闭
+		runlevel 开机启动
+	user 模块
+		  ansible web -m user -a "name=user" 	//在web组上创建 user账户
+			name		账户名称
+			state		创建账户present 删除账户absent
+			system		yes系统账户	no非系统账户
+			uid			uid
+			group		基本组
+			groups		附加组
+			shell			默认使用的shell
+			home		用户家目录
+			mone_home	yes移动家目录 no不移动
+			password	密码
+			comment	注释信息
+			remove		yes|no 当state=absent 是否删除用户家目录
