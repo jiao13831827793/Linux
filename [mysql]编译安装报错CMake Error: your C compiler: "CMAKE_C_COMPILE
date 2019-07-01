@@ -1,0 +1,3 @@
+报错大致都是缺少依赖包，安装这些就差不多了
+
+ yum install -y git gcc gcc-c++ ncurses-devel bison
